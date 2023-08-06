@@ -19,12 +19,12 @@ import People from './pages/People'
 import ForgotPassword from './pages/ForgotPassword'
 
 
-// create Router
+// createRouter
 const router = createBrowserRouter(
     createRoutesFromElements(
         <Route>
-            <Route path="/" element={<Login />}></Route>
-            <Route path="/Registration" element={<Registration />}></Route>
+            <Route path="/" element={<Registration />}></Route>
+            <Route path="/Login" element={<Login />}></Route>
             <Route path="/ForgotPassword" element={<ForgotPassword />}></Route>
 
             {/* RootLayouts Path */}
