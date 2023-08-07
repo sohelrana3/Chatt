@@ -14,7 +14,8 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import images from "../assets/chatt..png";
 // react icon
 import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 // inishalvalue
 let inishalvalue = {
@@ -30,6 +31,7 @@ const Registration = () => {
     const auth = getAuth();
     const db = getDatabase();
     let navigate = useNavigate();
+    const notify = (massges) => toast(massges);
     let [value, settvalue] = useState(inishalvalue);
 
     let handleChange = (e) => {
@@ -41,6 +43,7 @@ const Registration = () => {
     //handleSingup button
     let handleSingup = () => {
         let { email, fullname, password } = value;
+
         if (!email) {
             settvalue({
                 ...value,
@@ -69,6 +72,7 @@ const Registration = () => {
         // createUserWithEmailAndPassword chatt app
         createUserWithEmailAndPassword(auth, email, password).then((user) => {
             console.log(user);
+
             updateProfile(auth.currentUser, {
                 displayName: fullname,
             }).then(() => {
@@ -79,13 +83,15 @@ const Registration = () => {
                     });
                 });
             });
+            notify("Hi" + " " + fullname + " " + "Registration success");
             settvalue({
                 email: "",
                 fullname: "",
                 password: "",
                 loadding: false,
             });
-            navigate("/login")
+
+            navigate("/login");
         });
         //
     };
@@ -101,7 +107,7 @@ const Registration = () => {
             <div className="Registration">
                 <div className="regHadding">
                     <img src={images} alt="logo" />
-                    <h2 className="">Get started with easily register</h2>
+                    <h2>Get started with easily register</h2>
                     <h4>Free register and you can enjoy it</h4>
                 </div>
                 <div className="RegInput">
@@ -177,6 +183,14 @@ const Registration = () => {
                         Sign up
                     </Button>
                 )}
+                <div>
+                    <p className="regPra">
+                        Already have an account ?{" "}
+                        <Link to="/login" className="reglink">
+                            Sign In
+                        </Link>
+                    </p>
+                </div>
             </div>
         </Grid>
     );
