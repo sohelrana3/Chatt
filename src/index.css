@@ -1,14 +1,18 @@
 /* ------------Registration section start------------ */
 .Registration {
-    text-align: center;
-    width: 100%;
+    width: 320px;
     margin-top: 50px;
+}
+.regHadding{
+    text-align: center;
 }
 .Registration h2 {
     color: #11175D;
 }
 .RegInput{
     margin: 30px 0;
+    position: relative;
+
 }
 .MuiTextField-root {
     width: 320px;
@@ -17,5 +21,10 @@
 .MuiButton-root{
     width: 320px;
     border-radius: 33px;
+ 
 }
-
+.eye-reg{
+    position: absolute;
+    top: 30%;
+    right: 5%;
+}
