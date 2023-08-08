@@ -75,3 +75,13 @@ ol {
     border-radius: 5px;
 
 }
+.log{
+    width: 50%;
+    display: flex;
+    justify-content: space-evenly;
+}
+.logbutton {
+    padding: 10px 15px;
+    background-color: #222222;
+    color: #ffff;
+}
