@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 import { getDatabase, ref, set } from "firebase/database";
+import { useSelector } from "react-redux";
 // material css
 import { Grid, TextField, Button, Alert, Stack } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
@@ -13,6 +14,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import {useDispatch } from "react-redux"
 import {loginData} from "../slice/user/userSlice"
+
 
 // inishalvalue
 let inishalvalue = {
@@ -31,6 +33,7 @@ const Login = () => {
     let navigate = useNavigate();
     let dispatch = useDispatch()
     const notify = (massges) => toast(massges);
+    let userData = useSelector((state)=> state.loggeduser.loginUser)
     let [value, settvalue] = useState(inishalvalue);
     let handleChange = (e) => {
       settvalue({
@@ -76,6 +79,13 @@ const Login = () => {
 
       })
   };
+  //useEffect
+  useEffect(()=> {
+    if(userData !== null){
+        navigate("/chatt/home")
+        console.log("not");
+    }
+  },[])
 
     return (
         <Grid

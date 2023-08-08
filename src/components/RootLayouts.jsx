@@ -3,7 +3,7 @@ import images from "../assets/chatt..png";
 import user from "../assets/user.png";
 import { Outlet, Link, useNavigate, useLocation } from "react-router-dom";
 import { getAuth, signOut } from "firebase/auth";
-useNavigate;
+import { useSelector } from "react-redux";
 // material css
 import { Grid, Modal, Box, Typography, Button } from "@mui/material";
 // react icon
@@ -29,20 +29,20 @@ const RootLayouts = () => {
     const auth = getAuth();
     let navigate = useNavigate();
     let location = useLocation();
+    let userData = useSelector((state) => state.loggeduser.loginUser);
     //modal
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => {
         setOpen(false);
-     
     };
-
+    console.log(userData);
     // handleLogout
     let handleLogout = () => {
         signOut(auth).then(() => {
             // Sign-out successful.
             localStorage.removeItem("user");
-            navigate("/login");
+            navigate("/");
         });
     };
     return (
@@ -141,7 +141,9 @@ const RootLayouts = () => {
                                     <img src={user} alt="user" />
                                 </Grid>
                                 <Grid item xs={7}>
-                                    <h4>sohel rana</h4>
+                                    {userData !== null && (
+                                        <h4>{userData.displayName}</h4>
+                                    )}
                                     <p>Edit profile</p>
                                 </Grid>
                                 <Grid item xs={2}>
