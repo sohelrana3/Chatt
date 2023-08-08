@@ -29,12 +29,12 @@ const router = createBrowserRouter(
             <Route path="/ForgotPassword" element={<ForgotPassword />}></Route>
 
             {/* RootLayouts Path */}
-            <Route path="/Root" element={<RootLayouts />}>
-                <Route index element={<Home />}></Route>
-                <Route path="chatt" element={<Chat />}></Route>
-                <Route path="Friend" element={<Friend />}></Route>
-                <Route path="Group" element={<Group />}></Route>
-                <Route path="People" element={<People />}></Route>
+            <Route path="/chatt" element={<RootLayouts />}>
+                <Route path="home" element={<Home />}></Route>
+                <Route path="message" element={<Chat />}></Route>
+                <Route path="friend" element={<Friend />}></Route>
+                <Route path="group" element={<Group />}></Route>
+                <Route path="people" element={<People />}></Route>
             </Route>
         </Route>
     )

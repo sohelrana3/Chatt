@@ -64,9 +64,9 @@ const Login = () => {
       });
       //signInWithEmailAndPassword(auth, email, password)
       signInWithEmailAndPassword(auth, email, password).then((user)=>{
-        // localStorage.setItem("user", JSON.stringify(user.user));
+        localStorage.setItem("user", JSON.stringify(user.user));
         dispatch(loginData(user.user));
-        navigate("/Root")
+        navigate("/chatt/home")
       }).catch((error)=>{
         settvalue({
           ...value,

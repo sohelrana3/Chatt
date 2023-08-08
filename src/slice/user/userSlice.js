@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 export const counterSlice = createSlice({
   name: 'user',
   initialState: {
-    loginUser: null,
+    loginUser: localStorage.getItem("user") ?JSON.parse(localStorage.getItem("user")):null,
   },
   reducers: {
     loginData: (state, actions) => {
