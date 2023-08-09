@@ -14,7 +14,6 @@ import People from "../components/People";
 const Home = () => {
     let navigation = useNavigate();
     let userData = useSelector((state) => state.loggeduser.loginUser);
-    console.log(userData);
     useEffect(() => {
         if (userData == null) {
             navigation("/login");

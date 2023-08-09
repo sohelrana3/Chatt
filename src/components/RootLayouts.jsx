@@ -36,7 +36,6 @@ const RootLayouts = () => {
     const handleClose = () => {
         setOpen(false);
     };
-    console.log(userData);
     // handleLogout
     let handleLogout = () => {
         signOut(auth).then(() => {
