@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { getDatabase, ref, onValue, push, set } from "firebase/database";
+import {
+    getDatabase,
+    ref,
+    onValue,
+    remove,
+    push,
+    set,
+} from "firebase/database";
 import images from "../assets/user.png";
 
 // react icon
@@ -34,29 +41,25 @@ const People = () => {
         onValue(FriendRequestsRef, (snapshot) => {
             let arr = [];
             snapshot.forEach((item) => {
-                arr.push(item.val().whoreceiveid + item.val().whosendid,);
+                arr.push(item.val().whoreceiveid + item.val().whosendid);
             });
             setFriendRequests(arr);
         });
     }, []);
- 
+
     let handleAdd = (item) => {
         // console.log(item);
-        // console.log(userData);
-        // set(push(ref(db, "FriendRequests/")), {
-        //     whosendid: userData.uid,
-        //     whoname: userData.displayName,
-        //     whoreceiveid: item.id,
-        //     whoreceivename: item.username,
-        // });
+        // console.log(userData)
         set(ref(db, "FriendRequests/" + item.id), {
             whosendid: userData.uid,
             whoname: userData.displayName,
             whoreceiveid: item.id,
             whoreceivename: item.username,
         });
-        console.log(FriendRequests);
-        console.log(FriendRequests.includes(userData.uid));
+    };
+    //handleCancel
+    let handleCancel = (item) => {
+        remove(ref(db, "FriendRequests/" + item.id));
     };
     return (
         <div className="container">
@@ -71,7 +74,14 @@ const People = () => {
                     <img src={images} alt="user" />
                     <h2>{item.username}</h2>
                     {FriendRequests.includes(item.id + auth.currentUser.uid) ? (
-                        <Button variant="text">Cancel</Button>
+                        <Button
+                            onClick={() => handleCancel(item)}
+                            variant="text"
+                        >
+                            Cancel
+                        </Button>
+                    ) : FriendRequests.includes(userData.uid + item.id) ? (
+                        <Button variant="text">pending</Button>
                     ) : (
                         <Button onClick={() => handleAdd(item)} variant="text">
                             add

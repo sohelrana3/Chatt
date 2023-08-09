@@ -54,7 +54,11 @@ body {
 .regPra {
     margin: 20px 0;
 }
-
+h2 {
+    width: 60%;
+    margin-left: 16px;
+    font-size: 18px;
+}
 /* ----------------Root section start---------------- */
 .rootnav {
     height: 100vh;
@@ -128,15 +132,38 @@ body {
     align-items: center;
     width: 100%;
     margin-bottom: 16px;
-
 }
 .user img {
     width: 20%;
 }
-.user h2 {
-    width: 60%;
-    margin-left: 16px;
-}
 .user Button {
     width: 20%;
+}
+.friendreq {
+    width: 100;
+    display: flex;
+    align-items: center;
+}
+.friendreq .info {
+    display: flex;
+    
+    width: 70%;
+}
+.friendreq .button {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 30%;
+}
+.btn {
+    background-color: #11175d;
+    color: #ffff;
+    padding: 2px 5px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.btn1{
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
 }

@@ -80,12 +80,12 @@ const Login = () => {
       })
   };
   //useEffect
-  useEffect(()=> {
-    if(userData !== null){
-        navigate("/chatt/home")
-        console.log("not");
-    }
-  },[])
+//   useEffect(()=> {
+//     if(userData !== null){
+//         navigate("/chatt/home")
+//         console.log("not");
+//     }
+//   },[])
 
     return (
         <Grid
