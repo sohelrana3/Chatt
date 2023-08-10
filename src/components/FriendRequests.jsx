@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
     getDatabase,
     ref,
@@ -12,9 +12,7 @@ import images from "../assets/user.png";
 // react icon
 import { BsSearch } from "react-icons/bs";
 //material
-import Button from "@mui/material/Button";
 import { useSelector } from "react-redux";
-import { getAuth } from "firebase/auth";
 
 const FriendRequests = () => {
     const db = getDatabase();

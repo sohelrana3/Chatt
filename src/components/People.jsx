@@ -94,8 +94,8 @@ const People = () => {
                         </Button>
                     ) : FriendRequests.includes(userData.uid + item.id) ? (
                         <Button variant="text">pending</Button>
-                    ) : Friend.includes(userData.uid + item.id) ||
-                      Friend.includes(item.id + userData.uid) ? (
+                    ) : Friend.includes(userData.uid + item.id)||
+                       Friend.includes(item.id + userData.uid) ? (
                         <Button variant="text">Friend</Button>
                     ) : (
                         <Button onClick={() => handleAdd(item)} variant="text">
