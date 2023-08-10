@@ -148,7 +148,6 @@ h2 {
 }
 .friendreq .info {
     display: flex;
-    
     width: 70%;
 }
 .friendreq .button {
@@ -179,7 +178,7 @@ h2 {
     width: 60%;
     font-size: 14px;
     /* padding: 5px 0; */
-    margin-top: -10px;
+    margin-top: -20px;
     background-color: #32375c;
     color: #ffff;
     cursor: pointer;
@@ -203,5 +202,13 @@ h2 {
 
 /* -----------My group----------- */
 .myBtn{
+    width: 100%;
+    background-color: #11175d !important;
     color: #ffff !important;
+    text-transform: capitalize !important;
+    padding:0 !important;
+}
+.mybtn1{
+  background-color: transparent !important;
+  color: #11175d !important;
 }

@@ -154,8 +154,12 @@ const MyGroup = () => {
                         </div>
                     </div>
                     <div className="button">
-                        <button className="btn">Member</button>
-                        <button className="btn1">Request</button>
+                        {/* <button className="btn">Member</button>
+                        <button className="btn1">Request</button> */}
+                        <Button className="myBtn" variant="contained">
+                            Member
+                        </Button>
+                        <Button className="myBtn mybtn1">Request</Button>
                     </div>
                 </div>
             ))}
