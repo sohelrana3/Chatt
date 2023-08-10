@@ -47,7 +47,7 @@ const FriendRequests = () => {
     };
     return (
         <div className="container">
-            <h2>People</h2>
+            <h2>FriendRequests</h2>
             <div className="inputbox">
                 <input type="text" placeholder="Search" />
                 <BsSearch className="inputicon" />

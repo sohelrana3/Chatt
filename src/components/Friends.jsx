@@ -25,10 +25,6 @@ const Friends = () => {
         onValue(FriendRef, (snapshot) => {
             let arr = [];
             snapshot.forEach((item) => {
-                console.log(item.val().whoreceiveid);
-                console.log(item.val().whosendid);
-                console.log("amtt");
-                console.log(userData);
                 if (
                     userData.uid == item.val().whoreceiveid ||
                     userData.uid == item.val().whosendid
@@ -39,7 +35,36 @@ const Friends = () => {
             setFriend(arr);
         });
     }, []);
-
+    //handleUnfriend button
+    let handleUnfriend = (item) => {
+        console.log(item);
+        remove(ref(db, "Friend/" + item.id));
+    };
+    //handleBlock button
+    let handleBlock = (item) => {
+        console.log(item);
+        console.log(userData);
+        if (userData.uid == item.whoreceiveid) {
+            console.log("sent");
+            set(push(ref(db, "block/")), {
+                blockedname: item.whoname,
+                blockedid: item.whosendid,
+                blockbyname: userData.displayName,
+                blockbyid: userData.uid,
+            }).then(() => {
+                remove(ref(db, "Friend/" + item.id));
+            });
+        } else {
+            set(push(ref(db, "Block/")), {
+                blockedname: userData.displayName,
+                blockedid: userData.uid,
+                blockbyname: item.whoname,
+                blockbyid: item.whosendid,
+            }).then(() => {
+                remove(ref(db, "Friend/" + item.id));
+            });
+        }
+    };
     return (
         <div className="container">
             <h2>Friend</h2>
@@ -60,13 +85,13 @@ const Friends = () => {
                     </div>
                     <div className="button">
                         <button
-                            // onClick={() => handleAccept(item)}
+                            onClick={() => handleUnfriend(item)}
                             className="btn"
                         >
                             Unfriend
                         </button>
                         <button
-                            // onClick={() => handleCancel(item)}
+                            onClick={() => handleBlock(item)}
                             className="btn1"
                         >
                             Block
