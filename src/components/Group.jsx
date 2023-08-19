@@ -34,10 +34,25 @@ const Group = () => {
             setgroup(arr);
         });
     }, []);
+    //handleJoin
+    let handleJoins = (item) => {
+        console.log(item);
+        set(push(ref(db, "grouprequest/")), {
+            adminid: item.adminid,
+            adminname: item.admin,
+            groupid: item.id,
+            groupname: item.groupname,
+            userid: userData.uid,
+            username: userData.displayName,
+            time: Date.now().toString(),
+          }).then(()=>{
+            console.log("kere");
+          });
+    }
     return (
         <div className="container">
             <div className="creategroup">
-                <h2>MyGroup</h2>
+                <h2>Group</h2>
             </div>
             <div className="inputbox">
                 <input type="text" placeholder="Search" />
@@ -57,16 +72,19 @@ const Group = () => {
                                     color: "#616161",
                                 }}
                             >
-                                {/* {item.grouptag} */}
-                                hi bangladesh
+                                {item.grouptag}
+
+                                
                             </p>
                         </div>
                     </div>
                     <div className="button">
-                        <button className="btn">Join</button>
+                        <button onClick={()=> handleJoins(item)} className="btn">Join</button>
                     </div>
                 </div>
             ))}
+            
+
         </div>
     );
 };
