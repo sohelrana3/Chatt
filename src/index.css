@@ -212,3 +212,6 @@ h2 {
   background-color: transparent !important;
   color: #11175d !important;
 }
+.groupReq Button {
+    width: 30%;
+}

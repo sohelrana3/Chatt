@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import * as React from "react";
 import {
     getDatabase,
     ref,
@@ -12,7 +13,19 @@ import images from "../assets/user.png";
 // react icon
 import { BsSearch } from "react-icons/bs";
 //material
-import { Box, Button, Typography, Modal, TextField } from "@mui/material";
+import {
+    Box,
+    Button,
+    Typography,
+    Modal,
+    TextField,
+    List,
+    ListItem,
+    ListItemAvatar,
+    Avatar,
+    ListItemText,
+} from "@mui/material";
+
 import { useSelector } from "react-redux";
 import { ImCross } from "react-icons/im";
 
@@ -36,10 +49,12 @@ let inishallvalue = {
 const MyGroup = () => {
     const db = getDatabase();
     const [open, setOpen] = useState(false);
+    const [open2, setOpen2] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
     let [value, setvalue] = useState(inishallvalue);
     let [group, setgroup] = useState([]);
+    let [groupReq, setgroupReq] = useState([]);
     let userData = useSelector((state) => state.loggeduser.loginUser);
 
     // handleChange value
@@ -59,6 +74,30 @@ const MyGroup = () => {
         }).then(() => {
             setOpen(false);
         });
+    };
+
+    //handleReqest button
+    let handleReqest = (Group) => {
+        const GroupReqRef = ref(db, "grouprequest/");
+        onValue(GroupReqRef, (snapshot) => {
+            let arr = [];
+            snapshot.forEach((item) => {
+                console.log(item.val());
+                console.log(Group);
+                if(userData.uid == item.val().adminid && item.val().groupid == Group.id){
+                  
+                    arr.push({...item.val(), Groupid: item.key});
+                }
+            });
+            setgroupReq(arr);
+        });
+
+        setOpen2(true);
+    };
+
+    //handleClose2 button
+    let handleClose2 = () => {
+        setOpen2(false);
     };
 
     // group data
@@ -130,6 +169,86 @@ const MyGroup = () => {
                     </Box>
                 </Modal>
                 {/* ------------------Modal------------------ */}
+
+                {/* ------------------Modal2------------------ */}
+                <Modal
+                    open={open2}
+                    onClose={handleClose}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                >
+                    <Box sx={style}>
+                        <Typography
+                            id="modal-modal-title"
+                            variant="h6"
+                            component="h2"
+                        >
+                            <h4>Group Request List</h4>
+                            <ImCross
+                                onClick={handleClose2}
+                                className="groupicon"
+                            />
+                        </Typography>
+                        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                            <div>
+                                <List
+                                    sx={{
+                                        width: "100%",
+                                        maxWidth: 360,
+                                        bgcolor: "background.paper",
+                                    }}
+                                >
+                                    {groupReq.map((item) => (
+                                        <ListItem>
+                                            <ListItemAvatar>
+                                                <Avatar></Avatar>
+                                            </ListItemAvatar>
+                                            <ListItemText
+                                                primary={item.username}
+                                                secondary={
+                                                    <React.Fragment>
+                                                        <Typography
+                                                            sx={{
+                                                                display:
+                                                                    "inline",
+                                                            }}
+                                                            component="span"
+                                                            variant="body2"
+                                                            color="text.primary"
+                                                        >
+                                                           
+                                                        </Typography>
+                                                        {
+                                                            " -Wants to join your group"
+                                                        }
+                                                        <br />
+                                                        <div className="groupReq">
+                                                            <Button
+                                                                size="small"
+                                                                variant="contained"
+                                                                color="success"
+                                                            >
+                                                                Accept
+                                                            </Button>
+                                                            <Button
+                                                                size="small"
+                                                                variant="contained"
+                                                                color="error"
+                                                            >
+                                                                Delete
+                                                            </Button>
+                                                        </div>
+                                                    </React.Fragment>
+                                                }
+                                            />
+                                        </ListItem>
+                                    ))}
+                                </List>
+                            </div>
+                        </Typography>
+                    </Box>
+                </Modal>
+                {/* ------------------Modal 2------------------ */}
             </div>
             <div className="inputbox">
                 <input type="text" placeholder="Search" />
@@ -159,7 +278,12 @@ const MyGroup = () => {
                         <Button className="myBtn" variant="contained">
                             Member
                         </Button>
-                        <Button className="myBtn mybtn1">Request</Button>
+                        <Button
+                            onClick={() => handleReqest(item)}
+                            className="myBtn mybtn1"
+                        >
+                            Request
+                        </Button>
                     </div>
                 </div>
             ))}
