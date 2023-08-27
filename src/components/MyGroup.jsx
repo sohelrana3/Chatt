@@ -50,11 +50,13 @@ const MyGroup = () => {
     const db = getDatabase();
     const [open, setOpen] = useState(false);
     const [open2, setOpen2] = useState(false);
+    const [open3, setOpen3] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
     let [value, setvalue] = useState(inishallvalue);
     let [group, setgroup] = useState([]);
     let [groupReq, setgroupReq] = useState([]);
+    let [Members, setMembers] = useState([]);
     let userData = useSelector((state) => state.loggeduser.loginUser);
 
     // handleChange value
@@ -82,11 +84,11 @@ const MyGroup = () => {
         onValue(GroupReqRef, (snapshot) => {
             let arr = [];
             snapshot.forEach((item) => {
-                console.log(item.val());
-                console.log(Group);
-                if(userData.uid == item.val().adminid && item.val().groupid == Group.id){
-                  
-                    arr.push({...item.val(), Groupid: item.key});
+                if (
+                    userData.uid == item.val().adminid &&
+                    item.val().groupid == Group.id
+                ) {
+                    arr.push({ ...item.val(), Groupid: item.key });
                 }
             });
             setgroupReq(arr);
@@ -99,7 +101,37 @@ const MyGroup = () => {
     let handleClose2 = () => {
         setOpen2(false);
     };
+    // handleDelet button
 
+    let handleDelet = (item) => {
+        remove(ref(db, "grouprequest/" + item.Groupid));
+    };
+    // handleAccept Button
+
+    let handleAccept = (item) => {
+        set(push(ref(db, "groupMember/")), {
+            ...item,
+        }).then(() => {
+            remove(ref(db, "grouprequest/" + item.Groupid));
+        });
+    };
+    //handleMembers Button
+    let handleMembers = (member) => {
+        const MemberRef = ref(db, "groupMember/");
+        onValue(MemberRef, (snapshot) => {
+            let arr = [];
+            snapshot.forEach((item) => {
+                if (
+                    userData.uid == item.val().adminid &&
+                    item.val().groupid == member.id
+                ) {
+                    arr.push({ ...item.val(), memberid: item.key });
+                }
+            });
+            setMembers(arr);
+        });
+        setOpen3(true);
+    };
     // group data
     useEffect(() => {
         const groupRef = ref(db, "group/");
@@ -109,7 +141,6 @@ const MyGroup = () => {
                 if (userData.uid == item.val().adminid) {
                     arr.push({ ...item.val(), id: item.key });
                 }
-                console.log(arr);
             });
             setgroup(arr);
         });
@@ -121,7 +152,7 @@ const MyGroup = () => {
                 <Button className="button" onClick={handleOpen}>
                     Create Group
                 </Button>
-                {/* ------------------Modal------------------ */}
+                {/* ------------------Create Group Modal------------------ */}
                 <Modal
                     open={open}
                     onClose={handleClose}
@@ -168,9 +199,9 @@ const MyGroup = () => {
                         </Typography>
                     </Box>
                 </Modal>
-                {/* ------------------Modal------------------ */}
+                {/* ------------------Create Group Modal------------------ */}
 
-                {/* ------------------Modal2------------------ */}
+                {/* ------------------GroupReq Modal ------------------- */}
                 <Modal
                     open={open2}
                     onClose={handleClose}
@@ -215,15 +246,18 @@ const MyGroup = () => {
                                                             component="span"
                                                             variant="body2"
                                                             color="text.primary"
-                                                        >
-                                                           
-                                                        </Typography>
+                                                        ></Typography>
                                                         {
                                                             " -Wants to join your group"
                                                         }
                                                         <br />
                                                         <div className="groupReq">
                                                             <Button
+                                                                onClick={() =>
+                                                                    handleAccept(
+                                                                        item
+                                                                    )
+                                                                }
                                                                 size="small"
                                                                 variant="contained"
                                                                 color="success"
@@ -231,6 +265,11 @@ const MyGroup = () => {
                                                                 Accept
                                                             </Button>
                                                             <Button
+                                                                onClick={() =>
+                                                                    handleDelet(
+                                                                        item
+                                                                    )
+                                                                }
                                                                 size="small"
                                                                 variant="contained"
                                                                 color="error"
@@ -248,7 +287,75 @@ const MyGroup = () => {
                         </Typography>
                     </Box>
                 </Modal>
-                {/* ------------------Modal 2------------------ */}
+                {/* ------------------GroupReq Modal ------------------ */}
+                {/* ------------------Member Modal------------------ */}
+                <Modal
+                    open={open3}
+                    onClose={handleClose}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                >
+                    <Box sx={style}>
+                        <Typography
+                            id="modal-modal-title"
+                            variant="h6"
+                            component="h2"
+                        >
+                            <h4>Group Request List</h4>
+                            <ImCross
+                                onClick={() => setOpen3(false)}
+                                className="groupicon"
+                            />
+                        </Typography>
+                        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                            <div>
+                                <List
+                                    sx={{
+                                        width: "100%",
+                                        maxWidth: 360,
+                                        bgcolor: "background.paper",
+                                    }}
+                                >
+                                    {Members.map((item) => (
+                                        <ListItem>
+                                            <ListItemAvatar>
+                                                <Avatar></Avatar>
+                                            </ListItemAvatar>
+                                            <ListItemText
+                                                primary={item.username}
+                                                secondary={
+                                                    <React.Fragment>
+                                                        <Typography
+                                                            sx={{
+                                                                display:
+                                                                    "inline",
+                                                            }}
+                                                            component="span"
+                                                            variant="body2"
+                                                            color="text.primary"
+                                                        ></Typography>
+
+                                                        <div className="groupReq">
+                                                            <Button
+                                                                // onClick={()=> handleDelet(item)}
+                                                                size="small"
+                                                                variant="contained"
+                                                                color="error"
+                                                            >
+                                                                Delete
+                                                            </Button>
+                                                        </div>
+                                                    </React.Fragment>
+                                                }
+                                            />
+                                        </ListItem>
+                                    ))}
+                                </List>
+                            </div>
+                        </Typography>
+                    </Box>
+                </Modal>
+                {/* ------------------Member Modal ------------------ */}
             </div>
             <div className="inputbox">
                 <input type="text" placeholder="Search" />
@@ -275,7 +382,11 @@ const MyGroup = () => {
                     <div className="button">
                         {/* <button className="btn">Member</button>
                         <button className="btn1">Request</button> */}
-                        <Button className="myBtn" variant="contained">
+                        <Button
+                            onClick={() => handleMembers(item)}
+                            className="myBtn"
+                            variant="contained"
+                        >
                             Member
                         </Button>
                         <Button
