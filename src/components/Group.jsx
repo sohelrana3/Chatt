@@ -18,6 +18,8 @@ import { useSelector } from "react-redux";
 const Group = () => {
     const db = getDatabase();
     let [group, setgroup] = useState([]);
+    let [groupReq, setgroupReq] = useState([]);
+    let [memberList, setmemberList] = useState([]);
     let userData = useSelector((state) => state.loggeduser.loginUser);
 
     // group data
@@ -29,14 +31,34 @@ const Group = () => {
                 if (userData.uid !== item.val().adminid) {
                     arr.push({ ...item.val(), id: item.key });
                 }
-                console.log(arr);
             });
             setgroup(arr);
         });
     }, []);
+    // memberList
+    useEffect(() => {
+        const memberListRef = ref(db, "groupMember/");
+        onValue(memberListRef, (snapshot) => {
+            let arr = [];
+            snapshot.forEach((item) => {
+                arr.push(item.val().groupid + item.val().userid);
+            });
+            setmemberList(arr);
+        });
+    }, []);
+    // memberList
+    useEffect(() => {
+        const groupReqRef = ref(db, "grouprequest/");
+        onValue(groupReqRef, (snapshot) => {
+            let arr = [];
+            snapshot.forEach((item) => {
+                arr.push(item.val().groupid + item.val().userid);
+            });
+            setgroupReq(arr);
+        });
+    }, []);
     //handleJoin
     let handleJoins = (item) => {
-        console.log(item);
         set(push(ref(db, "grouprequest/")), {
             adminid: item.adminid,
             adminname: item.admin,
@@ -45,9 +67,11 @@ const Group = () => {
             userid: userData.uid,
             username: userData.displayName,
             time: Date.now().toString(),
-          }).then(()=>{
-            console.log("kere");
-          });
+        }).then(() => {});
+    };
+    // handleCancel button
+    let handleCancel = (item) =>{
+        console.log(item);
     }
     return (
         <div className="container">
@@ -73,18 +97,35 @@ const Group = () => {
                                 }}
                             >
                                 {item.grouptag}
-
-                                
                             </p>
                         </div>
                     </div>
                     <div className="button">
-                        <button onClick={()=> handleJoins(item)} className="btn">Join</button>
+                        {memberList.includes(item.id + userData.uid) ? (
+                            <button
+                                // onClick={() => handleJoins(item)}
+                                className="btn"
+                            >
+                                Joined
+                            </button>
+                        ) : groupReq.includes(item.id + userData.uid) ? (
+                            <button
+                                onClick={() => handleCancel(item)}
+                                className="btn"
+                            >
+                                Cancel
+                            </button>
+                        ) : (
+                            <button
+                                onClick={() => handleJoins(item)}
+                                className="btn"
+                            >
+                                Join
+                            </button>
+                        )}
                     </div>
                 </div>
             ))}
-            
-
         </div>
     );
 };
