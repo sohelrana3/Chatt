@@ -12,12 +12,15 @@ import images from "../assets/user.png";
 // react icon
 import { BsSearch } from "react-icons/bs";
 //material
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import {activechat} from "../slice/activeChat/activechat";
 
-const Friends = () => {
+const Friends = ({ button }) => {
     const db = getDatabase();
+    let dispatch = useDispatch();
     let [Friend, setFriend] = useState([]);
     let userData = useSelector((state) => state.loggeduser.loginUser);
+
 
     //useEffect
     useEffect(() => {
@@ -65,6 +68,17 @@ const Friends = () => {
             });
         }
     };
+    // handleMsg button
+    let handleMsg = (item) =>{
+        console.log(item);
+        if(item.whosendid == userData.uid){
+            console.log(item.whoreceiveid);
+            dispatch(activechat(item));
+        }else{
+            console.log(item.whosendid);
+            dispatch(activechat(item));
+        }
+    }
     return (
         <div className="container">
             <h2>Friend</h2>
@@ -84,18 +98,29 @@ const Friends = () => {
                         )}
                     </div>
                     <div className="button">
-                        <button
-                            onClick={() => handleUnfriend(item)}
-                            className="btn"
-                        >
-                            Unfriend
-                        </button>
-                        <button
-                            onClick={() => handleBlock(item)}
-                            className="btn1"
-                        >
-                            Block
-                        </button>
+                        {button == "msg" ? (
+                            <button
+                              onClick={()=> handleMsg(item)}
+                                className="btn"
+                            >
+                                Msg
+                            </button>
+                        ) : (
+                            <>
+                                <button
+                                    onClick={() => handleUnfriend(item)}
+                                    className="btn"
+                                >
+                                    Unfriend
+                                </button>
+                                <button
+                                    onClick={() => handleBlock(item)}
+                                    className="btn1"
+                                >
+                                    Block
+                                </button>
+                            </>
+                        )}
                     </div>
                 </div>
             ))}

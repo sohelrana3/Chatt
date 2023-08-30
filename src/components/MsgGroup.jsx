@@ -48,89 +48,11 @@ let inishallvalue = {
 
 const MsgGroup = () => {
     const db = getDatabase();
-    const [open, setOpen] = useState(false);
-    const [open2, setOpen2] = useState(false);
-    const [open3, setOpen3] = useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
-    let [value, setvalue] = useState(inishallvalue);
     let [group, setgroup] = useState([]);
-    let [groupReq, setgroupReq] = useState([]);
-    let [Members, setMembers] = useState([]);
     let userData = useSelector((state) => state.loggeduser.loginUser);
-
-    // handleChange value
-    let handleChange = (e) => {
-        setvalue({
-            ...value,
-            [e.target.name]: e.target.value,
-        });
-    };
-    //handleGroup button
-    let handleGroup = () => {
-        set(push(ref(db, "group/")), {
-            admin: userData.displayName,
-            adminid: userData.uid,
-            groupname: value.tagname,
-            grouptag: value.tagline,
-        }).then(() => {
-            setOpen(false);
-        });
-    };
-
-    //handleReqest button
-    let handleReqest = (Group) => {
-        const GroupReqRef = ref(db, "grouprequest/");
-        onValue(GroupReqRef, (snapshot) => {
-            let arr = [];
-            snapshot.forEach((item) => {
-                if (
-                    userData.uid == item.val().adminid &&
-                    item.val().groupid == Group.id
-                ) {
-                    arr.push({ ...item.val(), Groupid: item.key });
-                }
-            });
-            setgroupReq(arr);
-        });
-
-        setOpen2(true);
-    };
-
-    //handleClose2 button
-    let handleClose2 = () => {
-        setOpen2(false);
-    };
-    // handleDelet button
-
-    let handleDelet = (item) => {
-        remove(ref(db, "grouprequest/" + item.Groupid));
-    };
-    // handleAccept Button
-
-    let handleAccept = (item) => {
-        set(push(ref(db, "groupMember/")), {
-            ...item,
-        }).then(() => {
-            remove(ref(db, "grouprequest/" + item.Groupid));
-        });
-    };
     //handleMembers Button
-    let handleMembers = (member) => {
-        const MemberRef = ref(db, "groupMember/");
-        onValue(MemberRef, (snapshot) => {
-            let arr = [];
-            snapshot.forEach((item) => {
-                if (
-                    userData.uid == item.val().adminid &&
-                    item.val().groupid == member.id
-                ) {
-                    arr.push({ ...item.val(), memberid: item.key });
-                }
-            });
-            setMembers(arr);
-        });
-        setOpen3(true);
+    let handleGroupMsg = (item) => {
+        console.log(item);
     };
     // group data
     useEffect(() => {
@@ -148,74 +70,6 @@ const MsgGroup = () => {
     return (
         <div className="container">
             <div className="creategroup">
-                {/* ------------------Member Modal------------------ */}
-                <Modal
-                    open={open3}
-                    onClose={handleClose}
-                    aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description"
-                >
-                    <Box sx={style}>
-                        <Typography
-                            id="modal-modal-title"
-                            variant="h6"
-                            component="h2"
-                        >
-                            <h4>Group Members List</h4>
-                            <ImCross
-                                onClick={() => setOpen3(false)}
-                                className="groupicon"
-                            />
-                        </Typography>
-                        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                            <div>
-                                <List
-                                    sx={{
-                                        width: "100%",
-                                        maxWidth: 360,
-                                        bgcolor: "background.paper",
-                                    }}
-                                >
-                                    {Members.map((item) => (
-                                        <ListItem>
-                                            <ListItemAvatar>
-                                                <Avatar></Avatar>
-                                            </ListItemAvatar>
-                                            <ListItemText
-                                                primary={item.username}
-                                                secondary={
-                                                    <React.Fragment>
-                                                        <Typography
-                                                            sx={{
-                                                                display:
-                                                                    "inline",
-                                                            }}
-                                                            component="span"
-                                                            variant="body2"
-                                                            color="text.primary"
-                                                        ></Typography>
-
-                                                        <div className="groupReq">
-                                                            <Button
-                                                                // onClick={()=> handleDelet(item)}
-                                                                size="small"
-                                                                variant="contained"
-                                                                color="error"
-                                                            >
-                                                                Delete
-                                                            </Button>
-                                                        </div>
-                                                    </React.Fragment>
-                                                }
-                                            />
-                                        </ListItem>
-                                    ))}
-                                </List>
-                            </div>
-                        </Typography>
-                    </Box>
-                </Modal>
-                {/* ------------------Member Modal ------------------ */}
             </div>
             <div className="inputbox">
                 <input type="text" placeholder="Search" />
@@ -241,11 +95,11 @@ const MsgGroup = () => {
                     </div>
                     <div className="button">
                         <Button
-                            onClick={() => handleMembers(item)}
+                            onClick={() => handleGroupMsg(item)}
                             className="myBtn"
                             variant="contained"
                         >
-                            Member
+                            Msg
                         </Button>
                         
                     </div>

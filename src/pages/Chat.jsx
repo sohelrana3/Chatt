@@ -27,7 +27,7 @@ const Chat = () => {
                         <MsgGroup />
                     </div>
                     <div className="homeitem mt">
-                        <Friends />
+                        <Friends button="msg" />
                     </div>
                 </Grid>
                 <Grid item xs={8}>
