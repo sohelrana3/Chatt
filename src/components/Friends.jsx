@@ -13,14 +13,13 @@ import images from "../assets/user.png";
 import { BsSearch } from "react-icons/bs";
 //material
 import { useDispatch, useSelector } from "react-redux";
-import {activechat} from "../slice/activeChat/activechat";
+import { activechat } from "../slice/activeChat/activechat";
 
 const Friends = ({ button }) => {
     const db = getDatabase();
     let dispatch = useDispatch();
     let [Friend, setFriend] = useState([]);
     let userData = useSelector((state) => state.loggeduser.loginUser);
-
 
     //useEffect
     useEffect(() => {
@@ -69,16 +68,42 @@ const Friends = ({ button }) => {
         }
     };
     // handleMsg button
-    let handleMsg = (item) =>{
+    let handleMsg = (item) => {
         console.log(item);
-        if(item.whosendid == userData.uid){
-            console.log(item.whoreceiveid);
-            dispatch(activechat(item));
-        }else{
-            console.log(item.whosendid);
-            dispatch(activechat(item));
+        if (item.whosendid == userData.uid) {
+            dispatch(
+                activechat({
+                    name: item.whoreceivename,
+                    id: item.whoreceiveid,
+                    type: "singlemsg",
+                })
+            );
+            localStorage.setItem(
+                "activeChat",
+                JSON.stringify({
+                    name: item.whoreceivename,
+                    id: item.whoreceiveid,
+                    type: "singlemsg",
+                })
+            );
+        } else {
+            dispatch(
+                activechat({
+                    name: item.whoname,
+                    id: item.whosendid,
+                    type: "singlemsg",
+                })
+            );
+            localStorage.setItem(
+                "activeChat",
+                JSON.stringify({
+                    name: item.whoreceivename,
+                    id: item.whoreceiveid,
+                    type: "singlemsg",
+                })
+            );
         }
-    }
+    };
     return (
         <div className="container">
             <h2>Friend</h2>
@@ -100,7 +125,7 @@ const Friends = ({ button }) => {
                     <div className="button">
                         {button == "msg" ? (
                             <button
-                              onClick={()=> handleMsg(item)}
+                                onClick={() => handleMsg(item)}
                                 className="btn"
                             >
                                 Msg

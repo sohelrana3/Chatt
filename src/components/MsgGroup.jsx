@@ -26,8 +26,8 @@ import {
     ListItemText,
 } from "@mui/material";
 
-import { useSelector } from "react-redux";
-import { ImCross } from "react-icons/im";
+import { useDispatch, useSelector } from "react-redux";
+import { activechat } from "../slice/activeChat/activechat";
 
 const style = {
     position: "absolute",
@@ -48,11 +48,26 @@ let inishallvalue = {
 
 const MsgGroup = () => {
     const db = getDatabase();
+    let dispatch = useDispatch();
     let [group, setgroup] = useState([]);
     let userData = useSelector((state) => state.loggeduser.loginUser);
     //handleMembers Button
     let handleGroupMsg = (item) => {
-        console.log(item);
+        dispatch(
+            activechat({
+                name: item.groupname,
+                id: item.id,
+                type: "groupMsg",
+            })
+        );
+        localStorage.setItem(
+            "activeChat",
+            JSON.stringify({
+                name: item.groupname,
+                id: item.id,
+                type: "groupMsg",
+            })
+        );
     };
     // group data
     useEffect(() => {
@@ -69,8 +84,7 @@ const MsgGroup = () => {
     }, []);
     return (
         <div className="container">
-            <div className="creategroup">
-            </div>
+            <div className="creategroup"></div>
             <div className="inputbox">
                 <input type="text" placeholder="Search" />
                 <BsSearch className="inputicon" />
@@ -101,7 +115,6 @@ const MsgGroup = () => {
                         >
                             Msg
                         </Button>
-                        
                     </div>
                 </div>
             ))}

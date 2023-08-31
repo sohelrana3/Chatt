@@ -1,9 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import userImg from "../assets/user.png";
 import msgImg from "../assets/Register.png";
 import ModalImage from "react-modal-image";
 import Button from "@mui/material/Button";
+import { useSelector } from "react-redux";
 const ChattBox = () => {
+    let [value, setvalue] = useState("");
+    let activeChat = useSelector((state) => state.activechat.activechat);
+
+    //handleKeyPress
+    let handleKeyPress = (e) => {
+        if(e.key == "Enter"){
+            handleSent()
+        }
+    };
+    // handleSent button
+    let handleSent = () => {
+        console.log(value);
+            setvalue("")
+    };
     return (
         <div className="chatt-box">
             <div className="profile">
@@ -12,7 +27,7 @@ const ChattBox = () => {
                     <div className="round"></div>
                 </div>
                 <div>
-                    <h3>mern</h3>
+                    <h3>{activeChat.name}</h3>
                     <p>Online</p>
                 </div>
             </div>
@@ -77,12 +92,15 @@ const ChattBox = () => {
             <div className="msgcontainer">
                 <div className="msgwritecon">
                     <input
-                        // onChange={handleMsg}
+                        onChange={(e) => setvalue(e.target.value)}
                         className="msgwrite"
-                        // onKeyUp={handleKeyPress}
+                        onKeyUp={handleKeyPress}
+                        value={value}
                     />
                 </div>
-                <Button variant="contained">Send</Button>
+                <Button onClick={handleSent} variant="contained">
+                    Send
+                </Button>
             </div>
         </div>
     );
