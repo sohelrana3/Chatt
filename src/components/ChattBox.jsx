@@ -5,6 +5,7 @@ import ModalImage from "react-modal-image";
 import Button from "@mui/material/Button";
 import { useSelector } from "react-redux";
 import { getDatabase, ref, set, push, onValue } from "firebase/database";
+import moment from "moment/moment";
 const ChattBox = () => {
     const db = getDatabase();
     let [value, setvalue] = useState("");
@@ -19,30 +20,48 @@ const ChattBox = () => {
         }
     };
     // handleSent button
+
     let handleSent = () => {
-        console.log(value);
-
-        set(push(ref(db, "msg/")), {
-            whosendname: userData.displayName,
-            whosendid: userData.uid,
-            whorecivename: activeChat.name,
-            whoreciveid: activeChat.id,
-            msg: value,
-            date: 12 - 2023,
-            // date: `${new Date().getFullYear()}-${new Date().getMonth()+ 1}-${new Date().getDate()} ${new Date().getHours()}:${new Date().getMinutes()}`
-        }).then(() => {
-            console.log("ok");
-        });
-
-        setvalue("");
+        if (activeChat.type == "groupMsg") {
+            set(push(ref(db, "groupmsg/")), {
+                whosendname: userData.displayName,
+                whosendid: userData.uid,
+                whorecivename: activeChat.name,
+                whoreciveid: activeChat.id,
+                msg: value,
+                // date: `${new Date().getFullYear()}-${new Date().getMonth()+ 1}-${new Date().getDate()}-${new Date().getHours()}:${new Date().getMinutes}`,
+                date: `${new Date().getFullYear()}-${
+                    new Date().getMonth() + 1
+                }-${new Date().getDate()} ${new Date().getHours()}:${new Date().getMinutes()}`,
+            }).then(() => {
+                setvalue("");
+                console.log(
+                    `${new Date().getFullYear()}-${
+                        new Date().getMonth() + 1
+                    }-${new Date().getDate()} ${new Date().getHours()}:${new Date().getMinutes()}`
+                );
+            });
+        } else {
+            set(push(ref(db, "singlemsg/")), {
+                whosendname: userData.displayName,
+                whosendid: userData.uid,
+                whorecivename: activeChat.name,
+                whoreciveid: activeChat.id,
+                msg: value,
+                date: `${new Date().getFullYear()}-${
+                    new Date().getMonth() + 1
+                }-${new Date().getDate()} ${new Date().getHours()}:${new Date().getMinutes()}`,
+            }).then(() => {
+                setvalue("");
+            });
+        }
     };
     //
     useEffect(() => {
-        const msgRef = ref(db, "msg/");
+        const msgRef = ref(db, "singlemsg/");
         onValue(msgRef, (snapshot) => {
             let arr = [];
             snapshot.forEach((item) => {
-                console.log(item.val());
                 arr.push(item.val());
             });
             setmsg(arr);
@@ -106,18 +125,30 @@ const ChattBox = () => {
                 {/* ------------video msg end------------ */}
 
                 {/* ------------text msg start------------ */}
-                {msg.map((item) => (
-                    <>
+                {msg.map((item) =>
+                    item.whosendid == userData.uid &&
+                    item.whoreciveid == activeChat.id ? (
                         <div className="msg">
-                            <p className="sendmsg">hello sm</p>
-                            <p className="time">10 minits ago</p>
+                            <p className="sendmsg">{item.msg}</p>
+                            <p className="time">
+                                {moment(item.date, "YYYYMMDD hh:mm").fromNow()}
+                            </p>
                         </div>
-                        <div className="msg">
-                            <p className="getmsg">hello sm</p>
-                            <p className="time">10 minits ago</p>
-                        </div>
-                    </>
-                ))}
+                    ) : (
+                        item.whosendid == activeChat.id &&
+                        item.whoreciveid == userData.uid && (
+                            <div className="msg">
+                                <p className="getmsg">{item.msg}</p>
+                                <p className="time">
+                                    {moment(
+                                        item.date,
+                                        "YYYYMMDD hh:mm"
+                                    ).fromNow()}
+                                </p>
+                            </div>
+                        )
+                    )
+                )}
 
                 {/* ------------text msg end------------ */}
             </div>
