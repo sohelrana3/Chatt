@@ -10,9 +10,6 @@ import MsgGroup from "../components/MsgGroup";
 import ChattBox from "../components/ChattBox";
 
 const Chat = () => {
-    let navigation = useNavigate();
-    let userData = useSelector((state) => state.loggeduser.loginUser);
-
     return (
         <>
             <Grid

@@ -69,7 +69,7 @@ const Friends = ({ button }) => {
     };
     // handleMsg button
     let handleMsg = (item) => {
-        console.log(item);
+     
         if (item.whosendid == userData.uid) {
             dispatch(
                 activechat({
