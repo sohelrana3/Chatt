@@ -50,9 +50,11 @@ const MsgGroup = () => {
     const db = getDatabase();
     let dispatch = useDispatch();
     let [group, setgroup] = useState([]);
+    let [member, setmember] = useState([]);
     let userData = useSelector((state) => state.loggeduser.loginUser);
     //handleMembers Button
     let handleGroupMsg = (item) => {
+        console.log(item);
         dispatch(
             activechat({
                 name: item.groupname,
@@ -80,6 +82,24 @@ const MsgGroup = () => {
                 }
             });
             setgroup(arr);
+        });
+    }, []);
+    // groupMember data
+    useEffect(() => {
+        const groupMemberRef = ref(db, "groupMember/");
+        onValue(groupMemberRef, (snapshot) => {
+            let arr = [];
+            snapshot.forEach((item) => {
+                console.log(item.val().adminid);
+                console.log(userData.uid);
+                if (
+                    userData.uid !== item.val().adminid &&
+                    userData.uid == item.val().userid
+                ) {
+                    arr.push({ ...item.val(), id: item.key });
+                }
+            });
+            setmember(arr);
         });
     }, []);
     return (
@@ -118,6 +138,47 @@ const MsgGroup = () => {
                     </div>
                 </div>
             ))}
+            {/* ddddddddddddddddddddddddd */}
+            <>
+                {member.map((item) => (
+                    <div className="friendreq">
+                        <div className="info">
+                            <img src={images} alt="friendreq" />
+                            <div>
+                                {/* <h2>{item.groupname}</h2> */}
+                                <p
+                                    style={{
+                                        marginLeft: "16px",
+                                        fontSize: "14px",
+                                        color: "#616161",
+                                    }}
+                                >
+                                    Admin : {item.adminname}
+                                </p>
+                                <h2>{item.groupname}</h2>
+                                <p
+                                    style={{
+                                        marginLeft: "16px",
+                                        fontSize: "14px",
+                                        color: "#616161",
+                                    }}
+                                >
+                                    {item.grouptag}
+                                </p>
+                            </div>
+                        </div>
+                        <div className="button">
+                            <Button
+                                onClick={() => handleGroupMsg(item)}
+                                className="myBtn"
+                                variant="contained"
+                            >
+                                Msg
+                            </Button>
+                        </div>
+                    </div>
+                ))}
+            </>
         </div>
     );
 };

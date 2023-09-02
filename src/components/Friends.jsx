@@ -35,6 +35,40 @@ const Friends = ({ button }) => {
                 }
             });
             setFriend(arr);
+       
+            if (arr[0].whosendid == userData.uid) {
+                dispatch(
+                    activechat({
+                        name: arr[0].whoreceivename,
+                        id: arr[0].whoreceiveid,
+                        type: "singlemsg",
+                    })
+                );
+                localStorage.setItem(
+                    "activeChat",
+                    JSON.stringify({
+                        name: arr[0].whoreceivename,
+                        id: arr[0].whoreceiveid,
+                        type: "singlemsg",
+                    })
+                );
+            } else {
+                dispatch(
+                    activechat({
+                        name: arr[0].whoname,
+                        id: arr[0].whosendid,
+                        type: "singlemsg",
+                    })
+                );
+                localStorage.setItem(
+                    "activeChat",
+                    JSON.stringify({
+                        name: arr[0].whoreceivename,
+                        id: arr[0].whoreceiveid,
+                        type: "singlemsg",
+                    })
+                );
+            }
         });
     }, []);
     //handleUnfriend button
@@ -69,7 +103,6 @@ const Friends = ({ button }) => {
     };
     // handleMsg button
     let handleMsg = (item) => {
-     
         if (item.whosendid == userData.uid) {
             dispatch(
                 activechat({

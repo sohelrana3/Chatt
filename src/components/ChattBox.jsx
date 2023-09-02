@@ -9,8 +9,9 @@ import moment from "moment/moment";
 const ChattBox = () => {
     const db = getDatabase();
     let [value, setvalue] = useState("");
-    let [msg, setmsg] = useState([]);
     let activeChat = useSelector((state) => state.activechat.activechat);
+    let [msg, setmsg] = useState([]);
+    let [groupMsg, setgroupMsg] = useState([]);
     let userData = useSelector((state) => state.loggeduser.loginUser);
 
     //handleKeyPress
@@ -56,7 +57,7 @@ const ChattBox = () => {
             });
         }
     };
-    //
+    // single msg
     useEffect(() => {
         const msgRef = ref(db, "singlemsg/");
         onValue(msgRef, (snapshot) => {
@@ -65,6 +66,17 @@ const ChattBox = () => {
                 arr.push(item.val());
             });
             setmsg(arr);
+        });
+    }, []);
+    // groupMsg
+    useEffect(() => {
+        const groupMsgRef = ref(db, "groupmsg/");
+        onValue(groupMsgRef, (snapshot) => {
+            let arr = [];
+            snapshot.forEach((item) => {
+                arr.push(item.val());
+            });
+            setgroupMsg(arr);
         });
     }, []);
     return (
@@ -137,6 +149,30 @@ const ChattBox = () => {
                     ) : (
                         item.whosendid == activeChat.id &&
                         item.whoreciveid == userData.uid && (
+                            <div className="msg">
+                                <p className="getmsg">{item.msg}</p>
+                                <p className="time">
+                                    {moment(
+                                        item.date,
+                                        "YYYYMMDD hh:mm"
+                                    ).fromNow()}
+                                </p>
+                            </div>
+                        )
+                    )
+                )}
+
+                {groupMsg.map((item) =>
+                    item.whosendid == userData.uid &&
+                    item.whoreciveid == activeChat.id ? (
+                        <div className="msg">
+                            <p className="sendmsg">{item.msg}</p>
+                            <p className="time">
+                                {moment(item.date, "YYYYMMDD hh:mm").fromNow()}
+                            </p>
+                        </div>
+                    ) : (
+                        item.whosendid == activeChat.id && (
                             <div className="msg">
                                 <p className="getmsg">{item.msg}</p>
                                 <p className="time">
