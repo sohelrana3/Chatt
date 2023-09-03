@@ -74,6 +74,7 @@ const ChattBox = () => {
         onValue(groupMsgRef, (snapshot) => {
             let arr = [];
             snapshot.forEach((item) => {
+                console.log(item.val());
                 arr.push(item.val());
             });
             setgroupMsg(arr);
@@ -137,54 +138,59 @@ const ChattBox = () => {
                 {/* ------------video msg end------------ */}
 
                 {/* ------------text msg start------------ */}
-                {msg.map((item) =>
-                    item.whosendid == userData.uid &&
-                    item.whoreciveid == activeChat.id ? (
-                        <div className="msg">
-                            <p className="sendmsg">{item.msg}</p>
-                            <p className="time">
-                                {moment(item.date, "YYYYMMDD hh:mm").fromNow()}
-                            </p>
-                        </div>
-                    ) : (
-                        item.whosendid == activeChat.id &&
-                        item.whoreciveid == userData.uid && (
-                            <div className="msg">
-                                <p className="getmsg">{item.msg}</p>
-                                <p className="time">
-                                    {moment(
-                                        item.date,
-                                        "YYYYMMDD hh:mm"
-                                    ).fromNow()}
-                                </p>
-                            </div>
-                        )
-                    )
-                )}
-
-                {groupMsg.map((item) =>
-                    item.whosendid == userData.uid &&
-                    item.whoreciveid == activeChat.id ? (
-                        <div className="msg">
-                            <p className="sendmsg">{item.msg}</p>
-                            <p className="time">
-                                {moment(item.date, "YYYYMMDD hh:mm").fromNow()}
-                            </p>
-                        </div>
-                    ) : (
-                        item.whosendid == activeChat.id && (
-                            <div className="msg">
-                                <p className="getmsg">{item.msg}</p>
-                                <p className="time">
-                                    {moment(
-                                        item.date,
-                                        "YYYYMMDD hh:mm"
-                                    ).fromNow()}
-                                </p>
-                            </div>
-                        )
-                    )
-                )}
+                {activeChat.type == "singlemsg"
+                    ? msg.map((item) =>
+                          item.whosendid == userData.uid &&
+                          item.whoreciveid == activeChat.id ? (
+                              <div className="msg">
+                                  <p className="sendmsg">{item.msg}</p>
+                                  <p className="time">
+                                      {moment(
+                                          item.date,
+                                          "YYYYMMDD hh:mm"
+                                      ).fromNow()}
+                                  </p>
+                              </div>
+                          ) : (
+                              item.whosendid == activeChat.id &&
+                              item.whoreciveid == userData.uid && (
+                                  <div className="msg">
+                                      <p className="getmsg">{item.msg}</p>
+                                      <p className="time">
+                                          {moment(
+                                              item.date,
+                                              "YYYYMMDD hh:mm"
+                                          ).fromNow()}
+                                      </p>
+                                  </div>
+                              )
+                          )
+                      )
+                    : groupMsg.map((item) =>
+                          item.whosendid == userData.uid &&
+                          item.whoreciveid == activeChat.id ? (
+                              <div className="msg">
+                                  <p className="sendmsg">{item.msg}</p>
+                                  <p className="time">
+                                      {moment(
+                                          item.date,
+                                          "YYYYMMDD hh:mm"
+                                      ).fromNow()}
+                                  </p>
+                              </div>
+                          ) : (
+                            item.whoreciveid == activeChat.id &&
+                              <div className="msg">
+                                  <p className="getmsg">{item.msg}</p>
+                                  <p className="time">
+                                      {moment(
+                                          item.date,
+                                          "YYYYMMDD hh:mm"
+                                      ).fromNow()}
+                                  </p>
+                              </div>
+                          )
+                      )}
 
                 {/* ------------text msg end------------ */}
             </div>

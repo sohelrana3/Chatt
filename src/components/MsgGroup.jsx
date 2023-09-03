@@ -54,11 +54,11 @@ const MsgGroup = () => {
     let userData = useSelector((state) => state.loggeduser.loginUser);
     //handleMembers Button
     let handleGroupMsg = (item) => {
-        console.log(item);
+        console.log("group",item);
         dispatch(
             activechat({
                 name: item.groupname,
-                id: item.id,
+                id: item.groupid,
                 type: "groupMsg",
             })
         );
@@ -66,7 +66,7 @@ const MsgGroup = () => {
             "activeChat",
             JSON.stringify({
                 name: item.groupname,
-                id: item.id,
+                id: item.groupid,
                 type: "groupMsg",
             })
         );
@@ -77,8 +77,9 @@ const MsgGroup = () => {
         onValue(groupRef, (snapshot) => {
             let arr = [];
             snapshot.forEach((item) => {
+    
                 if (userData.uid == item.val().adminid) {
-                    arr.push({ ...item.val(), id: item.key });
+                    arr.push({ ...item.val(), groupid: item.key });
                 }
             });
             setgroup(arr);
@@ -90,13 +91,12 @@ const MsgGroup = () => {
         onValue(groupMemberRef, (snapshot) => {
             let arr = [];
             snapshot.forEach((item) => {
-                console.log(item.val().adminid);
-                console.log(userData.uid);
+
                 if (
                     userData.uid !== item.val().adminid &&
                     userData.uid == item.val().userid
                 ) {
-                    arr.push({ ...item.val(), id: item.key });
+                    arr.push(item.val());
                 }
             });
             setmember(arr);
