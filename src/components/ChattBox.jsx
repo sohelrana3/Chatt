@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import { getDatabase, ref, set, push, onValue } from "firebase/database";
 import moment from "moment/moment";
 import { AiOutlineFileImage } from "react-icons/ai";
+import { BsEmojiSmile } from "react-icons/bs";
 import Progressbar from "./Progressbar";
 import {
     getStorage,
@@ -14,6 +15,7 @@ import {
     uploadBytesResumable,
     getDownloadURL,
 } from "firebase/storage";
+import EmojiPicker from "emoji-picker-react";
 
 const ChattBox = () => {
     const db = getDatabase();
@@ -24,6 +26,7 @@ const ChattBox = () => {
     let [groupMsg, setgroupMsg] = useState([]);
     let userData = useSelector((state) => state.loggeduser.loginUser);
     const [progress, setProgress] = useState(0);
+    let [show, setshow] = useState(false);
 
     //handleKeyPress
     let handleKeyPress = (e) => {
@@ -60,6 +63,7 @@ const ChattBox = () => {
                 }-${new Date().getDate()} ${new Date().getHours()}:${new Date().getMinutes()}`,
             }).then(() => {
                 setvalue("");
+                setshow(false);
             });
         }
     };
@@ -148,6 +152,10 @@ const ChattBox = () => {
             setgroupMsg(arr);
         });
     }, []);
+    // handleEmoji
+    let handleEmoji = (emo) => {
+        setvalue(value + emo.emoji);
+    };
     return (
         <div className="chatt-box">
             <div className="profile">
@@ -321,7 +329,22 @@ const ChattBox = () => {
                         />
                         <input onChange={handelFileChange} type="file" hidden />
                     </label>
+                    <BsEmojiSmile
+                        onClick={() => setshow(!show)}
+                        style={{
+                            position: "absolute",
+                            top: "12px",
+                            right: "50px",
+                            fontSize: "16px",
+                        }}
+                    />
+                    {show && (
+                        <div className="emoji">
+                            <EmojiPicker onEmojiClick={handleEmoji} />
+                        </div>
+                    )}
                 </div>
+
                 <Button onClick={handleSent} variant="contained">
                     Send
                 </Button>

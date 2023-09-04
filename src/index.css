@@ -392,3 +392,8 @@ h2 {
 .MuiButton-root {
     width: 100px;
 }
+.emoji {
+    position: absolute;
+    bottom: 40px;
+    right: 30px;
+}
