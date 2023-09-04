@@ -335,6 +335,7 @@ h2 {
 .msgwritecon {
     width: 100%;
     border-radius: 10px;
+    position: relative;
 }
 .msgwrite {
     width: 100%;

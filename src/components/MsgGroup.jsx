@@ -12,6 +12,7 @@ import images from "../assets/user.png";
 
 // react icon
 import { BsSearch } from "react-icons/bs";
+
 //material
 import {
     Box,
@@ -176,6 +177,7 @@ const MsgGroup = () => {
                                 Msg
                             </Button>
                         </div>
+                        
                     </div>
                 ))}
             </>

@@ -6,13 +6,24 @@ import Button from "@mui/material/Button";
 import { useSelector } from "react-redux";
 import { getDatabase, ref, set, push, onValue } from "firebase/database";
 import moment from "moment/moment";
+import { AiOutlineFileImage } from "react-icons/ai";
+import Progressbar from "./Progressbar";
+import {
+    getStorage,
+    ref as imgref,
+    uploadBytesResumable,
+    getDownloadURL,
+} from "firebase/storage";
+
 const ChattBox = () => {
     const db = getDatabase();
+    const storage = getStorage();
     let [value, setvalue] = useState("");
     let activeChat = useSelector((state) => state.activechat.activechat);
     let [msg, setmsg] = useState([]);
     let [groupMsg, setgroupMsg] = useState([]);
     let userData = useSelector((state) => state.loggeduser.loginUser);
+    const [progress, setProgress] = useState(0);
 
     //handleKeyPress
     let handleKeyPress = (e) => {
@@ -36,11 +47,6 @@ const ChattBox = () => {
                 }-${new Date().getDate()} ${new Date().getHours()}:${new Date().getMinutes()}`,
             }).then(() => {
                 setvalue("");
-                console.log(
-                    `${new Date().getFullYear()}-${
-                        new Date().getMonth() + 1
-                    }-${new Date().getDate()} ${new Date().getHours()}:${new Date().getMinutes()}`
-                );
             });
         } else {
             set(push(ref(db, "singlemsg/")), {
@@ -56,6 +62,69 @@ const ChattBox = () => {
                 setvalue("");
             });
         }
+    };
+
+    // handelFileChange button
+    let handelFileChange = (e) => {
+        console.log(e.target.files[0]);
+        const storageRef = imgref(storage, `${e.target.files[0].name}`);
+
+        const uploadTask = uploadBytesResumable(storageRef, e.target.files[0]);
+
+        // Register three observers:
+        // 1. 'state_changed' observer, called any time the state changes
+        // 2. Error observer, called on failure
+        // 3. Completion observer, called on successful completion
+        uploadTask.on(
+            "state_changed",
+            (snapshot) => {
+                // Observe state change events such as progress, pause, and resume
+                // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                const progress =
+                    (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                console.log("Upload is " + progress + "% done");
+                setProgress(progress);
+            },
+            (error) => {
+                // Handle unsuccessful uploads
+            },
+            () => {
+                // Handle successful uploads on complete
+                // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                    console.log("File available at", downloadURL);
+                    setProgress(0);
+                    if (activeChat.type == "groupMsg") {
+                        set(push(ref(db, "groupmsg/")), {
+                            whosendname: userData.displayName,
+                            whosendid: userData.uid,
+                            whorecivename: activeChat.name,
+                            whoreciveid: activeChat.id,
+                            img: downloadURL,
+                            // date: `${new Date().getFullYear()}-${new Date().getMonth()+ 1}-${new Date().getDate()}-${new Date().getHours()}:${new Date().getMinutes}`,
+                            date: `${new Date().getFullYear()}-${
+                                new Date().getMonth() + 1
+                            }-${new Date().getDate()} ${new Date().getHours()}:${new Date().getMinutes()}`,
+                        }).then(() => {
+                            setvalue("");
+                        });
+                    } else {
+                        set(push(ref(db, "singlemsg/")), {
+                            whosendname: userData.displayName,
+                            whosendid: userData.uid,
+                            whorecivename: activeChat.name,
+                            whoreciveid: activeChat.id,
+                            img: downloadURL,
+                            date: `${new Date().getFullYear()}-${
+                                new Date().getMonth() + 1
+                            }-${new Date().getDate()} ${new Date().getHours()}:${new Date().getMinutes()}`,
+                        }).then(() => {
+                            setvalue("");
+                        });
+                    }
+                });
+            }
+        );
     };
     // single msg
     useEffect(() => {
@@ -74,7 +143,6 @@ const ChattBox = () => {
         onValue(groupMsgRef, (snapshot) => {
             let arr = [];
             snapshot.forEach((item) => {
-                console.log(item.val());
                 arr.push(item.val());
             });
             setgroupMsg(arr);
@@ -143,7 +211,17 @@ const ChattBox = () => {
                           item.whosendid == userData.uid &&
                           item.whoreciveid == activeChat.id ? (
                               <div className="msg">
-                                  <p className="sendmsg">{item.msg}</p>
+                                  {item.msg ? (
+                                      <p className="sendmsg">{item.msg}</p>
+                                  ) : (
+                                      <p className="sendimg">
+                                          <ModalImage
+                                              small={item.img}
+                                              large={item.img}
+                                          />
+                                      </p>
+                                  )}
+
                                   <p className="time">
                                       {moment(
                                           item.date,
@@ -155,7 +233,16 @@ const ChattBox = () => {
                               item.whosendid == activeChat.id &&
                               item.whoreciveid == userData.uid && (
                                   <div className="msg">
-                                      <p className="getmsg">{item.msg}</p>
+                                      {item.msg ? (
+                                          <p className="getmsg">{item.msg}</p>
+                                      ) : (
+                                          <p className="getmsg">
+                                              <ModalImage
+                                                  small={item.img}
+                                                  large={item.img}
+                                              />
+                                          </p>
+                                      )}
                                       <p className="time">
                                           {moment(
                                               item.date,
@@ -170,7 +257,16 @@ const ChattBox = () => {
                           item.whosendid == userData.uid &&
                           item.whoreciveid == activeChat.id ? (
                               <div className="msg">
-                                  <p className="sendmsg">{item.msg}</p>
+                                  {item.msg ? (
+                                      <p className="sendmsg">{item.msg}</p>
+                                  ) : (
+                                      <p className="sendimg">
+                                          <ModalImage
+                                              small={item.img}
+                                              large={item.img}
+                                          />
+                                      </p>
+                                  )}
                                   <p className="time">
                                       {moment(
                                           item.date,
@@ -179,16 +275,26 @@ const ChattBox = () => {
                                   </p>
                               </div>
                           ) : (
-                            item.whoreciveid == activeChat.id &&
-                              <div className="msg">
-                                  <p className="getmsg">{item.msg}</p>
-                                  <p className="time">
-                                      {moment(
-                                          item.date,
-                                          "YYYYMMDD hh:mm"
-                                      ).fromNow()}
-                                  </p>
-                              </div>
+                              item.whoreciveid == activeChat.id && (
+                                  <div className="msg">
+                                      {item.msg ? (
+                                          <p className="getmsg">{item.msg}</p>
+                                      ) : (
+                                          <p className="getmsg">
+                                              <ModalImage
+                                                  small={item.img}
+                                                  large={item.img}
+                                              />
+                                          </p>
+                                      )}
+                                      <p className="time">
+                                          {moment(
+                                              item.date,
+                                              "YYYYMMDD hh:mm"
+                                          ).fromNow()}
+                                      </p>
+                                  </div>
+                              )
                           )
                       )}
 
@@ -204,11 +310,23 @@ const ChattBox = () => {
                         onKeyUp={handleKeyPress}
                         value={value}
                     />
+                    <label>
+                        <AiOutlineFileImage
+                            style={{
+                                position: "absolute",
+                                top: "12px",
+                                right: "15px",
+                                fontSize: "16px",
+                            }}
+                        />
+                        <input onChange={handelFileChange} type="file" hidden />
+                    </label>
                 </div>
                 <Button onClick={handleSent} variant="contained">
                     Send
                 </Button>
             </div>
+            {progress != 0 && <Progressbar progress={progress} />}
         </div>
     );
 };
