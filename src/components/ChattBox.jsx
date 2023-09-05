@@ -9,6 +9,7 @@ import moment from "moment/moment";
 import { AiOutlineFileImage } from "react-icons/ai";
 import { BsEmojiSmile } from "react-icons/bs";
 import Progressbar from "./Progressbar";
+import Audio from "./Audio";
 import {
     getStorage,
     ref as imgref,
@@ -27,6 +28,7 @@ const ChattBox = () => {
     let userData = useSelector((state) => state.loggeduser.loginUser);
     const [progress, setProgress] = useState(0);
     let [show, setshow] = useState(false);
+
 
     //handleKeyPress
     let handleKeyPress = (e) => {
@@ -343,6 +345,14 @@ const ChattBox = () => {
                             <EmojiPicker onEmojiClick={handleEmoji} />
                         </div>
                     )}
+                    <div style={{
+                            position: "absolute",
+                            top: "0",
+                            right: "80px",
+                            fontSize: "16px",
+                        }}>
+                        <Audio />
+                    </div>
                 </div>
 
                 <Button onClick={handleSent} variant="contained">
