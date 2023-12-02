@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import images from "../assets/chatt..png";
 import user from "../assets/user.png";
 import { Outlet, Link, useNavigate, useLocation } from "react-router-dom";
@@ -11,6 +11,16 @@ import { AiFillHome, AiOutlineUser } from "react-icons/ai";
 import { BiGroup, BiBarcode } from "react-icons/bi";
 import { CiChat1 } from "react-icons/ci";
 import { FiSettings } from "react-icons/fi";
+import {
+    getStorage,
+    ref as imgref,
+    uploadBytesResumable,
+    getDownloadURL,
+} from "firebase/storage";
+import { getDatabase, ref, set, onValue } from "firebase/database";
+import { useDispatch } from "react-redux";
+import { userimg } from "../slice/userImg/userimg";
+
 
 //modal stayle
 const style = {
@@ -27,9 +37,14 @@ const style = {
 
 const RootLayouts = () => {
     const auth = getAuth();
+    const db = getDatabase();
+    const storage = getStorage();
     let navigate = useNavigate();
     let location = useLocation();
     let userData = useSelector((state) => state.loggeduser.loginUser);
+    let [userimg, setuserimg] = useState();
+    let [loading, setloading] = useState(true);
+    let dispatch = useDispatch();
     //modal
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
@@ -44,6 +59,65 @@ const RootLayouts = () => {
             navigate("/");
         });
     };
+    //handleUserImg
+    let handleUserImg = (e) => {
+        console.log(e.target.files[0]);
+        const storageRef = imgref(storage, `${e.target.files[0].name}`);
+
+        const uploadTask = uploadBytesResumable(storageRef, e.target.files[0]);
+
+        // Register three observers:
+        // 1. 'state_changed' observer, called any time the state changes
+        // 2. Error observer, called on failure
+        // 3. Completion observer, called on successful completion
+        uploadTask.on(
+            "state_changed",
+            (snapshot) => {
+                // Observe state change events such as progress, pause, and resume
+                // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                const progress =
+                    (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                console.log("Upload is " + progress + "% done");
+                switch (snapshot.state) {
+                    case "paused":
+                        console.log("Upload is paused");
+                        break;
+                    case "running":
+                        console.log("Upload is running");
+                        break;
+                }
+            },
+            (error) => {
+                // Handle unsuccessful uploads
+            },
+            () => {
+                // Handle successful uploads on complete
+                // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                    console.log("File available at", downloadURL);
+                    // set(ref(db, "userimg/"), {
+                    //     img: downloadURL,
+                    // });
+                  
+                 
+                });
+            }
+        );
+    };
+    useEffect(() => {
+        if (loading) {
+            const userimgRef = ref(db, "userimg/");
+            onValue(userimgRef, (snapshot) => {
+                const data = snapshot.val();
+                console.log(data);
+                setuserimg(data);
+                setloading(false);
+            });
+            return;
+        }
+
+        console.log("ol", userimg);
+    }, []);
     return (
         <>
             <Grid container spacing={2}>
@@ -137,7 +211,32 @@ const RootLayouts = () => {
                                 spacing={2}
                             >
                                 <Grid item xs={3}>
-                                    <img src={user} alt="user" />
+                                    <label>
+                                        <input
+                                            onChange={handleUserImg}
+                                            type="file"
+                                            hidden
+                                        />
+                                        <img
+                                            className="profileimg"
+                                            src={user}
+                                            alt="user"
+                                        />
+                                        {/* 
+                                        {userimg ? (
+                                            <img
+                                                className="profileimg"
+                                                src={userimg.img}
+                                                alt="user"
+                                            />
+                                        ) : (
+                                            <img
+                                                className="profileimg"
+                                                src={user}
+                                                alt="user"
+                                            />
+                                        )} */}
+                                    </label>
                                 </Grid>
                                 <Grid item xs={7}>
                                     {userData !== null && (

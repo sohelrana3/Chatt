@@ -99,6 +99,11 @@ h2 {
 .profile {
     padding: 0 15px 0 0px;
 }
+.profileimg {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
 
 /* -------------Home page design------------- */
 .box {
